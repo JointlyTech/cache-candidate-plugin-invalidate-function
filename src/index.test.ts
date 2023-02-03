@@ -1,5 +1,5 @@
 import { cacheCandidate } from '@jointly/cache-candidate';
-import { myPlugin } from './index';
+import { PluginInvalidateFunction } from './index';
 
 it('should throw if invalidateFunction is not passed', async () => {
   let counter = 0;
@@ -12,7 +12,7 @@ it('should throw if invalidateFunction is not passed', async () => {
   const wrappedMockFn = cacheCandidate(mockFn, {
     requestsThreshold: 1,
     ttl: 800,
-    plugins: [myPlugin]
+    plugins: [PluginInvalidateFunction]
   });
 
   await expect(wrappedMockFn(1)).rejects.toThrow();
@@ -31,11 +31,12 @@ it('should throw if invalidateFunction is not a function', async () => {
     ttl: 800,
     plugins: [
       {
-        ...myPlugin,
+        ...PluginInvalidateFunction,
         additionalParameters: {
           invalidateFunction: 42
         }
-      }]
+      }
+    ]
   });
 
   await expect(wrappedMockFn(1)).rejects.toThrow();
@@ -54,11 +55,12 @@ it('should throw if invalidateFunction returns a non-boolean value', async () =>
     ttl: 800,
     plugins: [
       {
-        ...myPlugin,
+        ...PluginInvalidateFunction,
         additionalParameters: {
           invalidateFunction: () => 42
         }
-      }]
+      }
+    ]
   });
 
   await expect(wrappedMockFn(1)).rejects.toThrow();
@@ -77,11 +79,12 @@ it('should invalidate if invalidateFunction returns true', async () => {
     ttl: 800,
     plugins: [
       {
-        ...myPlugin,
+        ...PluginInvalidateFunction,
         additionalParameters: {
           invalidateFunction: () => true
         }
-      }]
+      }
+    ]
   });
 
   await wrappedMockFn(1);
@@ -103,11 +106,12 @@ it('should not invalidate if invalidateFunction returns false', async () => {
     ttl: 800,
     plugins: [
       {
-        ...myPlugin,
+        ...PluginInvalidateFunction,
         additionalParameters: {
           invalidateFunction: () => false
         }
-      }]
+      }
+    ]
   });
 
   await wrappedMockFn(1);
