@@ -1,4 +1,7 @@
-import { CacheCandidatePlugin, Hooks } from '@jointly/cache-candidate-plugin-base';
+import {
+  CacheCandidatePlugin,
+  Hooks
+} from '@jointly/cache-candidate-plugin-base';
 
 export const PluginInvalidateFunction: CacheCandidatePlugin = {
   name: 'invalidate-function',
@@ -6,14 +9,18 @@ export const PluginInvalidateFunction: CacheCandidatePlugin = {
     {
       hook: Hooks.INIT,
       action: async (payload, { invalidateFunction }) => {
-        if (!invalidateFunction || typeof invalidateFunction !== "function") {
-          throw new Error("invalidate-function plugin expects the following additional parameter: invalidateFunction");
+        if (!invalidateFunction || typeof invalidateFunction !== 'function') {
+          throw new Error(
+            'invalidate-function plugin expects the following additional parameter: invalidateFunction'
+          );
         }
 
         const toInvalidate = invalidateFunction(payload.fnArgs);
 
-        if (typeof toInvalidate !== "boolean") {
-          throw new Error(`invalidateFunction should return a boolean value, received: ${typeof toInvalidate}`);
+        if (typeof toInvalidate !== 'boolean') {
+          throw new Error(
+            `invalidateFunction should return a boolean value, received: ${typeof toInvalidate}`
+          );
         }
 
         if (toInvalidate) {
@@ -26,4 +33,4 @@ export const PluginInvalidateFunction: CacheCandidatePlugin = {
       }
     }
   ]
-}
+};
