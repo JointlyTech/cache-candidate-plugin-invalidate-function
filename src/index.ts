@@ -1,6 +1,6 @@
 import { CacheCandidatePlugin, Hooks } from '@jointly/cache-candidate-plugin-base';
 
-export const myPlugin: CacheCandidatePlugin = {
+export const PluginInvalidateFunction: CacheCandidatePlugin = {
   name: 'invalidate-function',
   hooks: [
     {
