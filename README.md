@@ -1,74 +1,48 @@
 # What is this?
 
-A simple scaffolding tool for creating a new project to be published to npm.  
-It provides a build command that will compile your code to a CommonJS Node 14.16 target, allowing named imports for CommonJS packages inside ESM files.  
-The package contains a simple "hello world" based on TypeScript, built on esbuild, tested through Jest and linted with ESLint and Prettier.  
-It also provides a Husky pre-commit hook to run some linting based on prettier and eslint and run tests, so you can simple `git add` and `git commit` without worrying about anything else.
+This is a plugin for [@jointly/cache-candidate](https://github.com/JointlyTech/cache-candidate) providing an invalidation mechanism under specific conditions.
 
 ## How To Install?
 
 ```bash
-git clone git://github.com/JointlyTech/npm-package-ts-scaffolding.git package_name
-cd package_name
-npm install
-npx husky install
+$ npm install @jointly/cache-candidate-plugin-invalidate-function
 ```
 
-## What do you mean by `allowing named imports from CommonJS`?
+## How To Use It?
 
-If you try to run `npm run build` you will be able to import the `sayHello` function from the `index.js` file, both via `require` and `import` syntax.
+The library exposes a `PluginInvalidateFunction` object that can be used as a plugin for the `cacheCandidate` library.
 
-### Importing via `require`
 
-```js
-const { sayHello } = require('my-package');
+```typescript
+import { cacheCandidate } from '@jointly/cache-candidate';
+import { PluginInvalidateFunction } from '@jointly/cache-candidate-plugin-invalidate-function';
+
+async function getUsers(filters) {
+  // Do something
+  return users;
+}
+
+const cachedGetUsers = cacheCandidate(getUsers, {
+  requestsThreshold: 1,
+  plugins: [
+      {
+        name: PluginInvalidateFunction.name,
+        hooks: PluginInvalidateFunction.hooks,
+        // ...PluginInvalidateFunction would do the same
+        additionalParameters: { invalidateFunction: (fnArgs) => {
+          let shouldInvalidate = executeQueryToDetermineIfCacheShouldBeInvalidated();
+          return shouldInvalidate;
+        } } // <-- This will invalidate the cache record if the amount of filters passed to the method is greater than 1
+      }
+    ]
+});
+
+let users;
+users = await cachedGetUsers(); // <-- This will be executed and cached.
+// Here something happens so that executeQueryToDetermineIfCacheShouldBeInvalidated returns true
+users = await cachedGetUsers(); // <-- This will be firstly invalidated, then executed and cached again.
 ```
 
-### Importing via `import`
-
-```js
-import { sayHello } from 'my-package';
-```
-
-# Why did you build it?
-
-I got tired of copying and pasting the same files over and over again.  
-This is a simple tool to create a new project with the basic files needed to publish to npm.
-
-# How can I personalize it?
-
-You can change the `package.json` file to your liking, bringing your own package name and description.  
-Please, remember to give me a star if you like the project!
-
-# What's Inside?
-
-- Typescript
-- Jest
-- Eslint
-- Prettier
-- Husky
-- Esbuild
-- Commitlint
-
-# How to push and release an update?
-
-```bash
-git add --all
-git commit -m "chore: update package"
-npm run release:patch
-```
-
-Remember to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard.
-You can substitute `patch` with `minor` or `major` to update the version accordingly.
-
-# How to run tests?
-
-```bash
-npm test
-```
-
-# Contributing
-
-If you want to contribute to this project, please open an issue or a pull request.  
-I will be happy to review it and merge it if it's useful.  
-Please, remember to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard.  
+You must pass an additional parameter `invalidateFunction` property which instructs the plugin about when to invalidate the cache record.
+This property must be a synchronous function that receives the arguments passed to the method on which the `cacheCandidate` operates and returns a boolean value.  
+If the function returns `true`, the cache record will be invalidated and the cacheCandidate will continue its normal execution.
