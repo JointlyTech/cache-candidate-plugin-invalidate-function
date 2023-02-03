@@ -2,7 +2,7 @@
   "name": "@jointly/cache-candidate-plugin-invalidate-function",
   "description": "This is a cache-candidate plugin providing an invalidation mechanism under specific conditions.",
   "private": false,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
