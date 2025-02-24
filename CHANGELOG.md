@@ -1,3 +1,10 @@
+## 3.0.0 (2025-02-24)
+
+##### New Features
+
+*  moving to v2 to force alingment ([7578a16a](https://github.com/JointlyTech/cache-candidate-plugin-invalidate-function/commit/7578a16af4c2db3856e324c4cc767d95bc54fd7a))
+*  moving to native node test runner ([f2fb0ecf](https://github.com/JointlyTech/cache-candidate-plugin-invalidate-function/commit/f2fb0ecfa6e3784c07b57950e7aa6579d67325f2))
+
 ## 1.0.0 (2023-02-03)
 
 ##### Chores
