@@ -1,7 +1,9 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
 import { cacheCandidate } from '@jointly/cache-candidate';
 import { PluginInvalidateFunction } from './index';
 
-it('should throw if invalidateFunction is not passed', async () => {
+test('should throw if invalidateFunction is not passed', async (t) => {
   let counter = 0;
   const mockFn = (step: number) =>
     new Promise((resolve) => {
@@ -15,10 +17,12 @@ it('should throw if invalidateFunction is not passed', async () => {
     plugins: [PluginInvalidateFunction]
   });
 
-  await expect(wrappedMockFn(1)).rejects.toThrow();
+  await assert.rejects(async () => {
+    await wrappedMockFn(1);
+  });
 });
 
-it('should throw if invalidateFunction is not a function', async () => {
+test('should throw if invalidateFunction is not a function', async (t) => {
   let counter = 0;
   const mockFn = (step: number) =>
     new Promise((resolve) => {
@@ -39,10 +43,12 @@ it('should throw if invalidateFunction is not a function', async () => {
     ]
   });
 
-  await expect(wrappedMockFn(1)).rejects.toThrow();
+  await assert.rejects(async () => {
+    await wrappedMockFn(1);
+  });
 });
 
-it('should throw if invalidateFunction returns a non-boolean value', async () => {
+test('should throw if invalidateFunction returns a non-boolean value', async (t) => {
   let counter = 0;
   const mockFn = (step: number) =>
     new Promise((resolve) => {
@@ -63,10 +69,12 @@ it('should throw if invalidateFunction returns a non-boolean value', async () =>
     ]
   });
 
-  await expect(wrappedMockFn(1)).rejects.toThrow();
+  await assert.rejects(async () => {
+    await wrappedMockFn(1);
+  });
 });
 
-it('should invalidate if invalidateFunction returns true', async () => {
+test('should invalidate if invalidateFunction returns true', async (t) => {
   let counter = 0;
   const mockFn = (step: number) =>
     new Promise((resolve) => {
@@ -88,12 +96,12 @@ it('should invalidate if invalidateFunction returns true', async () => {
   });
 
   await wrappedMockFn(1);
-  expect(counter).toBe(1);
+  assert.equal(counter, 1);
   await wrappedMockFn(1);
-  expect(counter).toBe(2);
+  assert.equal(counter, 2);
 });
 
-it('should not invalidate if invalidateFunction returns false', async () => {
+test('should not invalidate if invalidateFunction returns false', async (t) => {
   let counter = 0;
   const mockFn = (step: number) =>
     new Promise((resolve) => {
@@ -115,7 +123,7 @@ it('should not invalidate if invalidateFunction returns false', async () => {
   });
 
   await wrappedMockFn(1);
-  expect(counter).toBe(1);
+  assert.equal(counter, 1);
   await wrappedMockFn(1);
-  expect(counter).toBe(1);
+  assert.equal(counter, 1);
 });
